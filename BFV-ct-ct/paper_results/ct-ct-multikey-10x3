@@ -1,0 +1,13 @@
+ key    omega      k_s |  max|y| D0  max|y| D1 | log2|e_0| D0        D1 | verdict
+   0    22111    3.382 |         19        212 |     44.01     48.57 | separated
+   1    26252    3.492 |         56        624 |     44.77     48.57 | separated
+   2     8320    3.281 |          4         74 |     43.90     48.53 | separated
+   3    10506    3.403 |         30        258 |     44.23     48.53 | separated
+   4    10455    3.421 |         28        299 |     43.35     48.49 | separated
+   5     5997    3.191 |          2         28 |     43.58     48.51 | separated
+   6    29530    3.272 |          6         68 |     44.48     48.54 | separated
+   7    27852    3.413 |          5        290 |     41.73     48.50 | separated
+   8      157    3.689 |        233       4189 |     43.79     48.61 | separated
+   9    17840    3.246 |          3         53 |     44.13     48.55 | separated
+
+10/10 key pairs separated (max|y| for D1 more than 4x that of D0)

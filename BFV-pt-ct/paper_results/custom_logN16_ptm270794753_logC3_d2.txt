@@ -1,0 +1,163 @@
+=== Running: custom_logN16_ptm270794753_logC3_d2 ===
+Command: OMP_NUM_THREADS=1 ./build/bin/examples/pke/bfv_ptct_sk --logN 16 --ptm 270794753 --logC 3 --depth 2
+Started: Tue Apr  7 19:32:19 CEST 2026
+
+**FOR DEBUGGING ONLY!!!!  Using fixed initializer for PRNG. Use a single thread only, e.g., OMP_NUM_THREADS=1!
+
+============================================================
+CONFIGURATION SUMMARY
+------------------------------------------------------------
+Ring Dimension (N)   : 65536
+Log2 Q (Ciphertext)  : 180.00
+Plaintext Modulus (p): 270794753 (~28.01 bits)
+Vnorm = 15.26
+Theoretical Est. Depth: 12
+Theoretical ATK. Depth: 10
+============================================================
+
+============================================================
+PRE-RUN SINGLE INDEX DEBUG (idx=7)
+------------------------------------------------------------
+... Initial ct0 info ... 
+real e_i (L-inf):  1.21e+01
+real e_i(w)     :  (4.19e+04,-2.01e+05)
+------------------------------------------------------------
+ ... PT info ... 
+||pt||_inf: 2^3
+|pt(w)|   : 2^17.353
+------------------------------------------------------------
+pt-ct mult done 1 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  2.13282e+01
+real e_i(w)     :  (9.57118e+09,-3.30391e+10)
+pt-ct mult done 2 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  3.78691e+01
+real e_i(w)     :  (2.01975e+15,-5.39152e+15)
+pt-ct mult done 3 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  5.53365e+01
+real e_i(w)     :  (4.06009e+20,-8.73968e+20)
+pt-ct mult done 4 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  7.25916e+01
+real e_i(w)     :  (7.89329e+25,-1.40665e+26)
+pt-ct mult done 5 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  8.99601e+01
+real e_i(w)     :  (1.49716e+31,-2.24665e+31)
+pt-ct mult done 6 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  1.07313e+02
+real e_i(w)     :  (2.78585e+36,-3.55801e+36)
+pt-ct mult done 7 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  1.24671e+02
+real e_i(w)     :  (5.10421e+41,-5.58179e+41)
+pt-ct mult done 8 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  1.42019e+02
+real e_i(w)     :  (9.23208e+46,-8.66286e+46)
+pt-ct mult done 9 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  1.59362e+02
+real e_i(w)     :  (1.65150e+52,-1.32771e+52)
+pt-ct mult done 10 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  1.76719e+02
+real e_i(w)     :  (2.92594e+57,-2.00466e+57)
+pt-ct mult done 11 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  1.79000e+02
+real e_i(w)     :  (5.52255e+55,-1.67621e+56)
+pt-ct mult done 12 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  1.79000e+02
+real e_i(w)     :  (6.07070e+55,-1.29845e+56)
+[Pre-run Debug] Iter used     : 12
+[Pre-run Debug] abs error     : 2.05506e+05
+============================================================
+--- Starting Error Recovery Analysis (Indices 1 to 65536) ---
+[Progress 1/8] Index 8192 | Iter: 10 | Abs Error: 2.59635e-05 | Est: (-1.85629e+04, -1.70144e+05i)
+[Progress 2/8] Index 16384 | Iter: 10 | Abs Error: 2.20545e-05 | Est: (8.82838e+04, 1.83693e+05i)
+[Progress 3/8] Index 24576 | Iter: 10 | Abs Error: 2.49816e-05 | Est: (-3.35113e+04, 1.61575e+05i)
+[Progress 4/8] Index 32768 | Iter: 10 | Abs Error: 2.36317e-05 | Est: (-2.00944e+04, -2.36696e+04i)
+[Progress 5/8] Index 40960 | Iter: 10 | Abs Error: 2.01506e-05 | Est: (7.02914e+04, -2.83166e+05i)
+[Progress 6/8] Index 49152 | Iter: 10 | Abs Error: 1.36439e-05 | Est: (-1.08255e+05, 2.02531e+05i)
+[Progress 7/8] Index 57344 | Iter: 10 | Abs Error: 1.03968e-05 | Est: (-1.24903e+05, 2.55764e+05i)
+[Progress 8/8] Index 65536 | Iter:  9 | Abs Error: 1.71402e-01 | Est: (8.84750e+04, 4.16771e+04i)
+
+============================================================
+DEBUG: FIRST 50 SK COEFFS (TRUE VS RECOVERED)
+------------------------------------------------------------
+j=  0 | sk_true= 0 | sk_est_raw=   0 | sk_est_clip= 0 | OK
+j=  1 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j=  2 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j=  3 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j=  4 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j=  5 | sk_true= 0 | sk_est_raw=   0 | sk_est_clip= 0 | OK
+j=  6 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j=  7 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j=  8 | sk_true= 0 | sk_est_raw=   0 | sk_est_clip= 0 | OK
+j=  9 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 10 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 11 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 12 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j= 13 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j= 14 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j= 15 | sk_true= 0 | sk_est_raw=   0 | sk_est_clip= 0 | OK
+j= 16 | sk_true= 0 | sk_est_raw=   0 | sk_est_clip= 0 | OK
+j= 17 | sk_true= 0 | sk_est_raw=   0 | sk_est_clip= 0 | OK
+j= 18 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 19 | sk_true= 0 | sk_est_raw=   0 | sk_est_clip= 0 | OK
+j= 20 | sk_true= 0 | sk_est_raw=   0 | sk_est_clip= 0 | OK
+j= 21 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j= 22 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j= 23 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 24 | sk_true= 0 | sk_est_raw=   0 | sk_est_clip= 0 | OK
+j= 25 | sk_true= 0 | sk_est_raw=   0 | sk_est_clip= 0 | OK
+j= 26 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 27 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 28 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j= 29 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j= 30 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 31 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 32 | sk_true= 0 | sk_est_raw=   0 | sk_est_clip= 0 | OK
+j= 33 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 34 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j= 35 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 36 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 37 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 38 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j= 39 | sk_true= 0 | sk_est_raw=   0 | sk_est_clip= 0 | OK
+j= 40 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j= 41 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j= 42 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 43 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j= 44 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j= 45 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 46 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+j= 47 | sk_true= 1 | sk_est_raw=   1 | sk_est_clip= 1 | OK
+j= 48 | sk_true= 0 | sk_est_raw=   0 | sk_est_clip= 0 | OK
+j= 49 | sk_true=-1 | sk_est_raw=  -1 | sk_est_clip=-1 | OK
+SK Coeff Match Ratio    : 1.000000
+============================================================
+
+============================================================
+SUMMARY OF ANALYSIS
+------------------------------------------------------------
+Average Abs Error (e(w)): 3.149571e-05
+Maximum Abs Error (e(w)): 1.714027e-01
+Final L2 Error (e)      : 0
+L2 Residual (c0-e+sc1)  : 0
+Max Residual (c0-e+sc1) : 0
+SK Match Ratio (coeff)  : 1
+EvalNoiseBFVComplex calls (main loop): 393216 ~ 6 N
+last_iter range (main loop): [9, 10] --> [9: 2, 10: 65534]
+------------------------------------------------------------
+Collecting Time (e(w))  : 7582.24 s
+Recovery Time (e)       : 22.7005 s (22.6569 s for e + 0.0404531 s for s)
+Total Elapsed Time      : 7604.94 s
+============================================================
+
+Finished: Tue Apr  7 21:39:05 CEST 2026

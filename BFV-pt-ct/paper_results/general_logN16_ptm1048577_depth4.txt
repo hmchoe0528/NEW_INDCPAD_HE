@@ -1,0 +1,104 @@
+=== Running: general_logN16_ptm1048577_depth4 ===
+Command: OMP_NUM_THREADS=1 ./build/bin/examples/pke/bfv_ptct_sk_general --logN 16 --ptm 1048577  --depth 4 --cF 1.0
+Started: Tue Apr  7 16:15:27 CEST 2026
+
+**FOR DEBUGGING ONLY!!!!  Using fixed initializer for PRNG. Use a single thread only, e.g., OMP_NUM_THREADS=1!
+
+============================================================
+CONFIGURATION SUMMARY
+------------------------------------------------------------
+Ring Dimension (N)    : 65536
+Log2 Q (Ciphertext)   : 240.00
+Plaintext Modulus (p) : 1048577 (~20.00 bits)
+SetMultiplicativeDepth: 4
+Vnorm = 15.2592
+normEXP_e1_inf = 20.2343 (from e1_inf)
+Estimated Factor = 28.0000 (delta_N * t / 2), delta_N = 2 * sqrt(N).
+Theoretical Est. Depth: 7
+Constant used for attack: 483144 (2^18.8821)
+Custom Factor: 1.0000
+============================================================
+
+============================================================
+PRE-RUN SINGLE INDEX DEBUG (idx=7)
+------------------------------------------------------------
+... Initial ct0 info ... 
+real e_i (L-inf):  1.2077e+01
+real e_i(w)     :  (-8.6479e+04,-4.1297e+05)
+------------------------------------------------------------
+ ... PT info ... 
+||pt||_inf: 2^18.882
+|pt(w)|   : 2^33.235
+------------------------------------------------------------
+pt-ct mult done 1 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  3.79336e+01
+real e_i(w)     :  (-5.52746e+14,-4.22912e+15)
+pt-ct mult done 2 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  7.04435e+01
+real e_i(w)     :  (-2.30561e+24,-4.30521e+25)
+pt-ct mult done 3 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  1.03661e+02
+real e_i(w)     :  (1.00044e+34,-4.35702e+35)
+pt-ct mult done 4 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  1.36819e+02
+real e_i(w)     :  (4.37260e+44,-4.38371e+45)
+pt-ct mult done 5 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  1.70073e+02
+real e_i(w)     :  (7.79202e+54,-4.38457e+55)
+pt-ct mult done 6 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  2.03299e+02
+real e_i(w)     :  (1.12391e+65,-4.35904e+65)
+pt-ct mult done 7 times for idx 7
+EvalNoiseBFVComplex running.. 
+real e_i (L-inf):  2.36533e+02
+real e_i(w)     :  (1.46937e+75,-4.30669e+75)
+[Pre-run Debug] Iter used     : 7
+[Pre-run Debug] abs error     : 1.44132e-02
+[Pre-run Debug] log2 q/2 = 239, log2 q/2t = 219
+============================================================
+--- Starting Error Recovery Analysis (Indices 1 to 65536) ---
+idx: 1 -> |est_e0| = 66237, |actual_e0_w| = 66237
+[Progress 1..] Index    1 | Iter:  7 | Abs Error: 1.22033e-03 | Est: (4.66363e+04, 4.70363e+04i) | Dec Calls (so far): 1
+idx: 2 -> |est_e0| = 5.3905e+05, |actual_e0_w| = 5.3905e+05
+[Progress 2..] Index    2 | Iter:  7 | Abs Error: 8.08117e-03 | Est: (2.87524e+05, -4.55969e+05i) | Dec Calls (so far): 2
+idx: 3 -> |est_e0| = 97106, |actual_e0_w| = 97106
+[Progress 3..] Index    3 | Iter:  7 | Abs Error: 3.16186e-03 | Est: (6.00504e+04, -7.63116e+04i) | Dec Calls (so far): 3
+idx: 4 -> |est_e0| = 71502, |actual_e0_w| = 71502
+[Progress 4..] Index    4 | Iter:  7 | Abs Error: 1.14627e-02 | Est: (-4.57483e+04, 5.49511e+04i) | Dec Calls (so far): 4
+idx: 5 -> |est_e0| = 34136, |actual_e0_w| = 34136
+[Progress 5..] Index    5 | Iter:  7 | Abs Error: 4.23834e-03 | Est: (2.51405e+04, -2.30912e+04i) | Dec Calls (so far): 5
+[Progress 1/8] Index 8192 | Iter:  7 | Abs Error: 2.69746e-03 | Est: (6.68447e+04, 6.58056e+04i) | Dec Calls (so far): 8192
+[Progress 2/8] Index 16384 | Iter:  7 | Abs Error: 5.79415e-03 | Est: (-2.31615e+04, 5.44946e+04i) | Dec Calls (so far): 16384
+[Progress 3/8] Index 24576 | Iter:  7 | Abs Error: 2.43325e-02 | Est: (-1.94667e+05, -1.06372e+05i) | Dec Calls (so far): 24576
+[Progress 4/8] Index 32768 | Iter:  7 | Abs Error: 1.03135e-02 | Est: (7.87605e+04, -5.16688e+03i) | Dec Calls (so far): 32768
+[Progress 5/8] Index 40960 | Iter:  7 | Abs Error: 1.68831e-02 | Est: (-4.65077e+04, 4.62632e+04i) | Dec Calls (so far): 40960
+[Progress 6/8] Index 49152 | Iter:  7 | Abs Error: 8.86057e-03 | Est: (-1.34436e+04, -8.81763e+04i) | Dec Calls (so far): 49152
+[Progress 7/8] Index 57344 | Iter:  7 | Abs Error: 2.31210e-02 | Est: (-1.79618e+03, 9.40888e+04i) | Dec Calls (so far): 57344
+[Progress 8/8] Index 65536 | Iter:  7 | Abs Error: 1.22329e-03 | Est: (4.66363e+04, -4.70363e+04i) | Dec Calls (so far): 65536
+SK Coeff Match Ratio    : 1.000000
+============================================================
+
+============================================================
+SUMMARY OF ANALYSIS
+------------------------------------------------------------
+Average Abs Error (e(w)): 1.049331e-02
+Maximum Abs Error (e(w)): 4.068747e-02
+Final L2 Error (e)      : 0
+L2 Residual (c0-e+sc1)  : 0
+Max Residual (c0-e+sc1) : 0
+SK Match Ratio (coeff)  : 1
+last_iter range.        : [7]
+O_Dec calls             : 65536
+------------------------------------------------------------
+Collecting Time (e(w))  : 6834.04 s
+Recovery Time (e)       : 21.4787 s (21.4321 s for e + 0.0438389 s for s)
+Total Elapsed Time      : 6855.52 s
+============================================================
+
+Finished: Tue Apr  7 18:09:44 CEST 2026

@@ -1,0 +1,41 @@
+MIT License
+
+Copyright (c) 2026 Hyeongmin Choe, Minsik Kang, and Damien Stehlé
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+                            ----------------
+
+Parts of this repository are modifications of two libraries and stay under the
+licences those libraries carry. Each such file keeps its original header, and
+the terms below govern it rather than the MIT licence above.
+
+  Apache License 2.0, from HElib (https://github.com/homenc/HElib)
+      BGV/HElib-msater/include/helib/*.h
+      BGV/HElib-msater/src/*.cpp
+
+  BSD 2-Clause License, from OpenFHE
+  (https://github.com/openfheorg/openfhe-development)
+      BFV-pt-ct/blake2engine.cpp
+      BFV-ct-ct/indcpad_ctct.cpp
+      the two CMakeLists.txt taken from the OpenFHE tree
+
+Everything else -- the attacks themselves, the analysis scripts, and everything
+under artifact/ -- is ours and is under the MIT licence above.

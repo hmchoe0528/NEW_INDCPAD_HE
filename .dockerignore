@@ -1,0 +1,10 @@
+# Keep the build context small; none of these belong in the image.
+.git
+.gitignore
+.dockerignore
+.vscode
+__pycache__
+*.pyc
+.DS_Store
+results
+data-collected-by-authors
