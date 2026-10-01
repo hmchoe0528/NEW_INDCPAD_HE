@@ -1,5 +1,11 @@
 # New IND-CPA-D Attacks on BFV and BGV
-This repository contains the artifacts for the paper "New IND-CPA-D Attacks on BFV and BGV" (ACM CCS 2026). It includes the following attacks, one per section of the paper: 
+This repository contains the artifacts for the paper 
+
+```
+Hyeongmin Choe, Minsik Kang, and Damien Stehlé, "New IND-CPA-D Attacks on BFV and BGV," ACM CCS 2026.
+```
+
+It includes the following CPA-D-style attacks, one per section of the paper: 
 
   - Section 3. [BGV Bootstrapping Attack using HElib](#bgv-bootstrapping-attack-using-helib) 
     - Related to Tables 1 and 2, and Figures 2, 6, 7, and 8. 
@@ -8,6 +14,14 @@ This repository contains the artifacts for the paper "New IND-CPA-D Attacks on B
   - Section 5. [BFV CT-CT Attack using OpenFHE](#bfv-ct-ct-attack-using-openfhe)
     - Related to Tables 4, 5, 6, and 7, and Figures 4, 5, 10, and 11.
     
+# Reproducing the Paper Results
+The sections below build each attack by hand against upstream HElib and OpenFHE. 
+
+For a one-command, containerized reproduction of every figure and table — no manual build, no library download — use the Docker artifact in [`artifact/`](artifact/README.md): `make quick` for a two-minute smoke test, and `make c1`, `make c2`, `make c3` for the three claims. 
+
+See [`artifact/README.md`](artifact/README.md) for further details.
+
+
 # BGV Bootstrapping Attack using HElib
 See `BGV` directory. 
 It includes the following codes, for the BGV bootstrapping attack using [HElib library](https://github.com/homenc/HElib), as described in Section 3. 
@@ -279,7 +293,5 @@ The outputs are stored as follows.
 Table 6 is analytic and needs no run. The multikey log was produced as three concurrent processes of 4, 3 and 3 keys, whose outputs were merged and the keys renumbered; running the command above in one process gives the same thing, more slowly.
 
 Two points are worth knowing before re-running. First, the key is drawn afresh each time, and the gain $$C = \rho t$$ has to suit it: the amplification scales as $$k_s^K$$ while the readout window $$(q/2t,\, q/2)$$ is only $$\log_2 t$$ bits wide, so a $$\rho$$ tuned for one key can leave the noise below $$q/2t$$ or past $$q/2$$ for another. The band given to `indcpad_ctct` above keeps the figure reproducible; `ctct_multikey` deliberately does without it, and reports what a fixed $$C$$ achieves over random keys. Second, a run of forty trials takes some hours: the cost is $$2K$$ homomorphic squarings per trial, and is unaffected by `M`, which `EncryptLinComb` simulates rather than performing.
-
-For a containerized version that reproduces the paper's figures and tables end to end, see [`artifact/README.md`](artifact/README.md).
 
 
