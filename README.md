@@ -1,9 +1,9 @@
 # New IND-CPA-D Attacks on BFV and BGV
-This repository contains the artifacts for the paper 
+This repository is the implementation of the following paper:
 
-```
-Hyeongmin Choe, Minsik Kang, and Damien Stehlé, "New IND-CPA-D Attacks on BFV and BGV," ACM CCS 2026.
-```
+> **New IND-CPA-D Attacks on BFV and BGV**  
+> Hyeongmin Choe, Minsik Kang, and Damien Stehlé  
+> ACM Conference on Computer and Communications Security (CCS) 2026, https://doi.org/10.1145/3830454.3846665
 
 It includes the following CPA-D-style attacks, one per section of the paper: 
 

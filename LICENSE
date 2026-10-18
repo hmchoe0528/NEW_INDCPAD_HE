@@ -30,12 +30,14 @@ the terms below govern it rather than the MIT licence above.
   Apache License 2.0, from HElib (https://github.com/homenc/HElib)
       BGV/HElib-msater/include/helib/*.h
       BGV/HElib-msater/src/*.cpp
+      BGV/HElib-msater/tests/CMakeLists.txt
 
   BSD 2-Clause License, from OpenFHE
   (https://github.com/openfheorg/openfhe-development)
       BFV-pt-ct/blake2engine.cpp
       BFV-ct-ct/indcpad_ctct.cpp
-      the two CMakeLists.txt taken from the OpenFHE tree
+      BFV-pt-ct/(main) CMakeLists.txt, BFV-pt-ct/(pke) CMakeLists.txt
+      BFV-ct-ct/(main) CMakeLists.txt, BFV-ct-ct/(pke) CMakeLists.txt
 
 Everything else -- the attacks themselves, the analysis scripts, and everything
 under artifact/ -- is ours and is under the MIT licence above.
