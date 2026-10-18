@@ -106,18 +106,20 @@ One per claim of the camera-ready, and nothing else on that path.
 ||
 
 `c1` gathers its own failing ciphertexts, which is most of its two hours. Each
-of the three also takes `AUTHORDATA=1`, which reads the logs and samples we
-collected instead of running the attack:
+of the three also takes `AUTHORDATA=1`, which reads stored data instead of
+running the attack: for `c2` and `c3` the logs we ship under `paper_results/`,
+for `c1` a set of samples you gathered earlier:
 
 | | time | |
 | --- | --- | --- |
-| `make c1 AUTHORDATA=1` | ~19 min | the recovery and Fig. 2, from our samples |
+| `make c1 AUTHORDATA=1` | ~19 min | the recovery and Fig. 2, from a gathered set |
 | `make c2 AUTHORDATA=1` | 1 s | Tab. 3 and Fig. 3, from our logs |
 | `make c3 AUTHORDATA=1` | 2 s | Fig. 5, from our log |
 
-Only a fresh run shows the attack works on your machine; only `AUTHORDATA=1`
-meets the paper's own numbers to the digit, since a fresh gathering is a
-different sample. `REPORT.md` says which it is showing.
+Only a fresh run shows the attack works on your machine. For `c2` and `c3`,
+`AUTHORDATA=1` meets the paper's own numbers to the digit. For `c1` it does not:
+Table 2's counts belong to our sample, which we do not distribute, and any fresh
+gathering is a different sample. `REPORT.md` says which it is showing.
 
 ### **The appendices.**
 

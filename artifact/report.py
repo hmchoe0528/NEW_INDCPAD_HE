@@ -156,9 +156,9 @@ def main():
     lines = ["# Results", ""]
     lines += ["One section per claim of the camera-ready. Figures are written to",
               "`figures/`. Each section says whether what it shows was computed by",
-              "this run or read from the logs and samples the authors collected;",
-              "only the first is evidence that the attack works on your machine,",
-              "and only the second meets the paper's own numbers to the digit.",
+              "this run or read from stored data; only the first is evidence that",
+              "the attack works on your machine. The authors' logs for C2 and C3",
+              "meet the paper's own numbers to the digit.",
               ""]
 
     # -- C1 ------------------------------------------------------------------
@@ -174,15 +174,15 @@ def main():
                   "Results at `c1-keyrecovery-m21845.txt` and",
                   "`c1-keyrecovery-m28679.txt`.", ""]
         if authors:
-            lines += ["Recovered here, from the samples the authors collected, so",
-                      "the counts are the ones Table 2 publishes.", "",
+            lines += ["Recovered here, from a previously gathered set of samples.",
+                      "Table 2's counts are listed beside it for reference.", "",
                       "| set | ciphertexts | slots | correct | paper |",
                       "| --- | --- | --- | --- | --- |"]
         else:
             lines += ["Gathered and recovered here, so these are this run's own",
                       "failures rather than the authors'. What reproduces is the",
                       "recovery, not Table 2's counts, which belong to their",
-                      "sample; `make c1 AUTHORDATA=1` reproduces those.", "",
+                      "sample.", "",
                       "| set | ciphertexts | slots | correct |",
                       "| --- | --- | --- | --- |"]
         for m in (21845, 28679):

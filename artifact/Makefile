@@ -13,9 +13,10 @@
 #
 #   make report    instant   Sets what was produced beside what the paper says.
 #
-# Each of the three takes AUTHORDATA=1, which reads the logs and samples we
-# collected instead of running the attack. That is the fast way to see that the
-# paper's own numbers are the ones its runs produced:
+# Each of the three takes AUTHORDATA=1, which reads stored data instead of
+# running the attack: our shipped logs for c2 and c3, a set gathered earlier by
+# `make c1` for c1. For c2 and c3 that is the fast way to see that the paper's
+# own numbers are the ones its runs produced:
 #
 #   make c1 AUTHORDATA=1   ~19 min      make c3 AUTHORDATA=1   2 s
 #   make c2 AUTHORDATA=1   1 s
@@ -72,8 +73,8 @@ endif
 # each step took without the evaluator having to wrap anything in `time`.
 tick = @printf '%s\t%s\t%s\n' '$@' "$$(date +%s)" '$(1)' >> $(RESULTS)/timings.tsv
 
-# And records whether what it produced came from a run here or from the logs and
-# samples we collected, so that the report can say which it is showing.
+# And records whether what it produced came from a run here or from stored logs
+# and samples, so that the report can say which it is showing.
 mark = @printf '%s\t%s\n' '$@' '$(1)' >> $(RESULTS)/sources.tsv
 
 .PHONY: help quick c1 c2 c3 report clean \
@@ -84,9 +85,9 @@ help:
 	@echo "Current: THREADS=$(THREADS) TRIALS=$(TRIALS) RESULTS=$(RESULTS) DATA=$(DATA)"
 
 ## ------------------------------------------------------------------- quick --
-# The smoke test. Section 3 runs at the paper's parameters, on the samples we
-# ship, so Table 2 comes out exactly as published; Sections 4 and 5 run fresh at
-# reduced parameters, which is enough to show the attacks work.
+# The smoke test. Section 3 runs at the paper's parameters, on a set gathered
+# earlier by `make c1`; Sections 4 and 5 run fresh at reduced parameters, which
+# is enough to show the attacks work.
 quick: | $(RESULTS)
 	$(call tick,start)
 	@test -d $(DATA)/m21845_p2_e8_ep4_r1 -o -d $(DATA)/Collected_data/m21845_p2_e8_ep4_r1 \
@@ -114,9 +115,9 @@ quick: | $(RESULTS)
 
 ## ---------------------------------------------------------------------- C1 --
 # BGV bootstrapping. The failures are gathered here rather than read from ours,
-# which is two hours and 12 GB; AUTHORDATA=1 reads the shipped samples instead,
-# and is the only way to meet Table 2's published counts to the digit, since a
-# fresh gathering is a different sample. The slices are the ones Table 2 prints:
+# which is two hours and 12 GB; AUTHORDATA=1 reads a set gathered earlier
+# instead. Table 2's published counts belong to our sample, which is not
+# distributed, so a fresh gathering reproduces the recovery, not the counts. The slices are the ones Table 2 prints:
 # 50, 150 and 250 ciphertexts for A*, 50, 200 and 350 for B*.
 #
 # Of the plots the analysis can draw, only the A* coefficient distributions are
