@@ -91,6 +91,10 @@ docker run --rm -v "$PWD/results:/artifact/results" \
 - The container runs as root, so on Linux the files under `results/` come out
   owned by root. Add `--user "$(id -u):$(id -g)"` to the `docker run` to avoid
   that.
+- On Linux, a `permission denied` on the Docker socket means your user is not
+  in the `docker` group. Prefix the commands with `sudo`, or run
+  `sudo usermod -aG docker "$USER"` and start a new login session, since the
+  group change does not reach shells that are already open.
 
 ## Targets
 
