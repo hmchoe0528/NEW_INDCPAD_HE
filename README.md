@@ -94,7 +94,7 @@ Among the data point from the slices, it chooses the top candidate indices by va
 
 The plot option `--plot-vars` plots a 2×2 histogram grid (for Figures 7 and 8) showing the variance distribution of all $m$ indices, one panel per $\ell$. The actual secret key indices are highlighted with red markers for visual inspection.
 
-The other plot option `--plot-coeff-dist` plots 4 figures (for Figures 2 and 6) showing the distributions of $$c_j$$ per $\ell$, distinct graphs for its corresponding secret key value $$s_j \in \{-1, 0, 1\}$$. 
+The other plot option `--plot-coeff-dist` plots 4 figures (for Figures 2 and 6) showing the distributions of $`c_j`$ per $\ell$, distinct graphs for its corresponding secret key value $`s_j \in \{-1, 0, 1\}`$. 
 
 ### (c) Oracle-Call Estimate
 This needs neither HElib nor the collected samples, only `numpy`.
@@ -124,13 +124,11 @@ First, download [OpenFHE library](https://github.com/openfheorg/openfhe-developm
 
 - In `openfhe-development/src/pke/examples`: Put `bfv_ptct.hpp`, and `bfv_ptct_sk_general.cpp` beating error estimations for any $pt \in \mathcal{R}_t$, i.e., 
 
-$$\log_2 (Q / 2t) > K \cdot \log_2(\delta_N \cdot t / 2) +\log_2(\textsf{Vnorm}).$$
+  $$\log_2 (Q / 2t) > K \cdot \log_2(\delta_N \cdot t / 2) +\log_2(\textsf{Vnorm}).$$
 
-  - (additional) `bfv_ptct_sk.cpp` beating circuit-specific error estimations w.r.t.
+  - (additional) `bfv_ptct_sk.cpp` beating circuit-specific error estimations w.r.t. $`\Vert pt \Vert_\infty:`$
 
-  $$\Vert pt \Vert_\infty:$$
-
-  $$\log_2 (Q / 2t) > K \cdot \log_2(\delta_N \cdot \Vert pt \Vert_\infty) + \log_2(\textsf{Vnorm}).$$
+    $$\log_2 (Q / 2t) > K \cdot \log_2(\delta_N \cdot \Vert pt \Vert_\infty) + \log_2(\textsf{Vnorm}).$$
 
 - In `openfhe-development/src/pke/`: Replace `CMakeLists.txt` by `(pke) CMakeLists.txt`
 
@@ -202,30 +200,19 @@ python3 log2latex.py "file_name"
 See `BFV-ct-ct` directory. 
 It includes the following codes, for the BFV ct-ct mult attack using [OpenFHE library](https://github.com/openfheorg/openfhe-development), as described in Section 5. 
 
-  - (a) A package of IND-CPA-D attack scripts, (phase 1) mounting $K$ ct-ct multiplications, then decryptions, to calibrate
+- (a) A package of IND-CPA-D attack scripts, (phase 1) mounting $K$ ct-ct multiplications, then decryptions, to calibrate $`(\omega, k_a, K),`$ (phases 2 and 3) building reference distributions $`\mathcal{D}_0,`$ and $`\mathcal{D}_1,`$ from $`M`$ encryption queries on $`\mu_0 = 0`$ and $`\mu_1 = \mathcal{H}`$, respectively. The $`M`$ ciphertexts are combined with integer coefficients whose sum $$C$$ is a multiple of $t$, so that the tracked plaintext is $`C\mu_\gamma = 0`$ and the decryption query is legitimate, while the noise becomes
 
-$$(\omega, k_a, K),$$
+  $$\sum_i c_i \epsilon_i - \rho\cdot\nu(\mu_\gamma), \qquad \rho := C/t,$$
 
-(phases 2 and 3) building reference distributions
+  where $$\nu(\mu) := q\mu - t\Delta(\mu)$$ is the defect of the scaling encoding $$\Delta$$ (it vanishes only when $t$ divides $q$). The plaintext $$\mathcal{H}$$ is chosen to maximise $$\vert\nu(\mathcal{H})(\omega)\vert$$. The same $K$-fold amplification as in phase 1 is then applied and the result decrypted: it fails for both $$\gamma$$, and the two distributions are separated by the size of the returned coefficients, as shown in Figure 5. 
 
-$$\mathcal{D}_0,$$
+  - We note that it emulates the $$\vert a(\omega) \vert$$ enlarging procedures in phase 1 (which requires $$\ge 2^{20}$$ trials if truely applied), by using sk. However, the choice of $a$ is still randomized: $a$ is drawn uniformly from $`{\mathcal{R}_{q}}`$ and then shifted at the single coordinate $$\omega$$, so that $$\Vert a/q \Vert_\infty \approx 1/2$$ and all the canonical coordinates stay populated, as they would for a genuine sum of $`\mathsf{Enc}(0)`$'s. 
+  - It likewise emulates the $M$ encryption queries by drawing the aggregated encryption randomness directly, which is the same law up to the central limit theorem. Set the last argument of `EncryptLinComb` to `true` to perform the $M$ queries instead.
+  - Phase 3, which uses the challenge ciphertexts $$\mathsf{Enc}(\mu_\beta)$$ for the challenge bit $$\beta \in \{0, 1\}$$, is omitted: it is identical to one of the two runs of phase 2. One can simply distinguish by checking the magnitude of the decrypted coefficients. 
 
-and
+- (b) A script `ctct-boxplot.py` that analyzes the collected decryption results to generate the distribution plots (such as Figure 5). 
 
-$$\mathcal{D}_1,$$
-
-from $$M$$ encryption queries on $$\mu_0 = 0$$ and $$\mu_1 = \mathcal{H}$$, respectively. The $$M$$ ciphertexts are combined with integer coefficients whose sum $$C$$ is a multiple of $ t $, so that the tracked plaintext is $$C\mu_\gamma = 0$$ and the decryption query is legitimate, while the noise becomes
-
-$$\sum_i c_i \epsilon_i - \rho\cdot\nu(\mu_\gamma), \qquad \rho := C/t,$$
-
-where $$\nu(\mu) := q\mu - t\Delta(\mu)$$ is the defect of the scaling encoding $$\Delta$$ (it vanishes only when $ t $ divides $ q $). The plaintext $$\mathcal{H}$$ is chosen to maximise $$\vert\nu(\mathcal{H})(\omega)\vert$$. The same $K$-fold amplification as in phase 1 is then applied and the result decrypted: it fails for both $$\gamma$$, and the two distributions are separated by the size of the returned coefficients, as shown in Figure 5. 
-    - We note that it emulates the $$\vert a(\omega) \vert$$ enlarging procedures in phase 1 (which requires $$\ge 2^{20}$$ trials if truely applied), by using sk. However, the choice of $ a $ is still randomized: $ a $ is drawn uniformly from $$\mathcal{R}_q$$ and then shifted at the single coordinate $$\omega$$, so that $$\Vert a/q \Vert_\infty \approx 1/2$$ and all the canonical coordinates stay populated, as they would for a genuine sum of $$\mathsf{Enc}(0)$$'s. 
-    - It likewise emulates the $ M $ encryption queries by drawing the aggregated encryption randomness directly, which is the same law up to the central limit theorem. Set the last argument of `EncryptLinComb` to `true` to perform the $ M $ queries instead.
-    - Phase 3, which uses the challenge ciphertexts $$\mathsf{Enc}(\mu_\beta)$$ for the challenge bit $$\beta \in \{0, 1\}$$, is omitted: it is identical to one of the two runs of phase 2. One can simply distinguish by checking the magnitude of the decrypted coefficients. 
-
-  - (b) A script `ctct-boxplot.py` that analyzes the collected decryption results to generate the distribution plots (such as Figure 5). 
-
-  - (c) `ctct_multikey.cpp`, repeating phases 2 and 3 over independently generated key pairs, so that $$\mathsf{sk}$$, $$\mathsf{pk}$$ and every encryption randomness differ from run to run. 
+- (c) `ctct_multikey.cpp`, repeating phases 2 and 3 over independently generated key pairs, so that $$\mathsf{sk}$$, $$\mathsf{pk}$$ and every encryption randomness differ from run to run. 
 
 ## How to use
 ### (a) CT-CT Multiplications and IND-CPA-D attack
@@ -253,7 +240,7 @@ Build and run `ctct_multikey.cpp` the same way. It takes the number of key pairs
 ./build/bin/examples/pke/ctct_multikey 10 3 786433 35 4.5 24800 3.36 0 262144 0
 ```
 
-The result is stored in `paper_results/ct-ct-multikey-10x3`, and is reported as Table 5. It, too, uses the earlier library. Note that the absolute size of the decrypted coefficients varies a lot between key pairs, since the amplification factor is $$\prod_d 2t\,(a^*_d/q)(\omega)\,s(\omega)$$ and therefore depends on $$k_s = \vert s(\omega)\vert / \sqrt{2N/3}$$ raised to the power $K$; what is stable is the ratio between the two distributions, and $$\vert\epsilon_0(\omega)\vert$$ for $$\mu_\gamma = \mathcal{H}$$, which is deterministic and thus independent of the key.
+The result is stored in `paper_results/ct-ct-multikey-10x3`, and is reported as Table 5. It, too, uses the earlier library. Note that the absolute size of the decrypted coefficients varies a lot between key pairs, since the amplification factor is $`\prod_d 2t\,(a^*_d/q)(\omega)\,s(\omega)`$ and therefore depends on $`k_s = \vert s(\omega)\vert / \sqrt{2N/3}`$ raised to the power $K$; what is stable is the ratio between the two distributions, and $`\vert\epsilon_0(\omega)\vert`$ for $`\mu_\gamma = \mathcal{H}`$, which is deterministic and thus independent of the key.
 
 ### (c) Plot
 Use `ctct-boxplot.py` with the output results of (a). It currently reads `paper_results/data-ctct-40x10.txt`, the trial table of the stored run; adjust the path for the figure of Appendix E.3, whose table is `paper_results/v150/data-ctct-8nt-40x10.txt`. 
@@ -262,12 +249,12 @@ Use `ctct-boxplot.py` with the output results of (a). It currently reads `paper_
 python ctct-boxplot.py
 ```
 
-Each row of that table is one run of phases 2 and 3, and each column pair is one coefficient index of the decrypted result: the left entry comes from $$\mu_\gamma = 0$$ and the right entry from $$\mu_\gamma = \mathcal{H}$$. The script collects them into the two distributions $$\mathcal{D}_0$$ and $$\mathcal{D}_1$$ and draws them side by side, which is Figure 5. Note that both are centred at $ 0 $, since the decrypted result is a sinusoid whose phase changes from run to run; what separates them is the spread, which is proportional to $$\vert\epsilon_0(\omega)\vert$$ and therefore carries the signature $$\nu(\mu_\gamma)$$. 
+Each row of that table is one run of phases 2 and 3, and each column pair is one coefficient index of the decrypted result: the left entry comes from $`\mu_\gamma = 0`$ and the right entry from $`\mu_\gamma = \mathcal{H}`$. The script collects them into the two distributions $`\mathcal{D}_0`$ and $`\mathcal{D}_1`$ and draws them side by side, which is Figure 5. Note that both are centred at $`0`$, since the decrypted result is a sinusoid whose phase changes from run to run; what separates them is the spread, which is proportional to $`\vert\epsilon_0(\omega)\vert`$ and therefore carries the signature $`\nu(\mu_\gamma)`$. 
 
 ### (d) Mounting on OpenFHE v1.5.0
-Since commit `5ebe2b2` the library bounds the rounding error $$I$$ by a separate extension factor $$\delta_{\mathsf{ms}} = 4\sqrt{N}$$ instead of $$\delta_N = 2\sqrt{N}$$, so the certified noise bound is $$(8Nt)^K \cdot V_N$$ rather than $$(4Nt)^K \cdot V_N$$, and the condition for the amplification to outpace it becomes $$k_a k_s > 12\sqrt{2}$$. Appendix E.3 reports the attack under that revised bound; Sections 4 and 5 use the earlier one.
+Since commit `5ebe2b2` the library bounds the rounding error $`I`$ by a separate extension factor $`\delta_{\mathsf{ms}} = 4\sqrt{N}`$ instead of $`\delta_N = 2\sqrt{N}`$, so the certified noise bound is $`(8Nt)^K \cdot V_N`$ rather than $`(4Nt)^K \cdot V_N`$, and the condition for the amplification to outpace it becomes $`k_a k_s > 12\sqrt{2}`$. Appendix E.3 reports the attack under that revised bound; Sections 4 and 5 use the earlier one.
 
-`indcpad_ctct.cpp` takes, in order, `t`, `depth`, $$k_a$$, `M`, $$\rho$$, the number of trials, a lower and an upper bound on $$k_s$$ (the key is redrawn until it falls in that band; pass `0` and a large number to accept any key), and $$\delta_{\mathsf{ms}}/\sqrt{N}$$, which is `4` for OpenFHE since v1.4.2.4 and `2` before. That last argument is what lets one source serve both regimes. `ctct_multikey.cpp` takes the number of keys, the number of runs per key, then `t`, `depth`, $$k_a$$, $$\rho$$, a reference $$k_s$$, a ring dimension (`0` to let OpenFHE choose), `M`, and a flag selecting a fixed or a rescaled gain (`0` for fixed, as an adversary is bound to use).
+`indcpad_ctct.cpp` takes, in order, `t`, `depth`, $`k_a`$, `M`, $`\rho`$, the number of trials, a lower and an upper bound on $`k_s`$ (the key is redrawn until it falls in that band; pass `0` and a large number to accept any key), and $`\delta_{\mathsf{ms}}/\sqrt{N}`$, which is `4` for OpenFHE since v1.4.2.4 and `2` before. That last argument is what lets one source serve both regimes. `ctct_multikey.cpp` takes the number of keys, the number of runs per key, then `t`, `depth`, $`k_a`$, $`\rho`$, a reference $`k_s`$, a ring dimension (`0` to let OpenFHE choose), `M`, and a flag selecting a fixed or a rescaled gain (`0` for fixed, as an adversary is bound to use).
 
 The results of Sections 4 and 5 need the earlier library, which does not configure with current toolchains unless its bundled `google-benchmark` is disabled:
 
@@ -301,7 +288,7 @@ The outputs are stored as follows.
 
 Table 6 is analytic and needs no run. The multikey log was produced as three concurrent processes of 4, 3 and 3 keys, whose outputs were merged and the keys renumbered; running the command above in one process gives the same thing, more slowly.
 
-Two points are worth knowing before re-running. First, the key is drawn afresh each time, and the gain $$C = \rho t$$ has to suit it: the amplification scales as $$k_s^K$$ while the readout window $$(q/2t,\, q/2)$$ is only $$\log_2 t$$ bits wide, so a $$\rho$$ tuned for one key can leave the noise below $$q/2t$$ or past $$q/2$$ for another. The band given to `indcpad_ctct` above keeps the figure reproducible; `ctct_multikey` deliberately does without it, and reports what a fixed $$C$$ achieves over random keys. Second, a run of forty trials takes some hours: the cost is $$2K$$ homomorphic squarings per trial, and is unaffected by `M`, which `EncryptLinComb` simulates rather than performing.
+Two points are worth knowing before re-running. First, the key is drawn afresh each time, and the gain $$C = \rho t$$ has to suit it: the amplification scales as $`k_s^K`$ while the readout window $`(q/2t, q/2)`$ is only $`\log_2 t`$ bits wide, so a $`\rho`$ tuned for one key can leave the noise below $`q/2t`$ or past $`q/2`$ for another. The band given to `indcpad_ctct` above keeps the figure reproducible; `ctct_multikey` deliberately does without it, and reports what a fixed $$C$$ achieves over random keys. Second, a run of forty trials takes some hours: the cost is $`2K`$ homomorphic squarings per trial, and is unaffected by `M`, which `EncryptLinComb` simulates rather than performing.
 
 # How to Cite
 
