@@ -303,4 +303,21 @@ Table 6 is analytic and needs no run. The multikey log was produced as three con
 
 Two points are worth knowing before re-running. First, the key is drawn afresh each time, and the gain $$C = \rho t$$ has to suit it: the amplification scales as $$k_s^K$$ while the readout window $$(q/2t,\, q/2)$$ is only $$\log_2 t$$ bits wide, so a $$\rho$$ tuned for one key can leave the noise below $$q/2t$$ or past $$q/2$$ for another. The band given to `indcpad_ctct` above keeps the figure reproducible; `ctct_multikey` deliberately does without it, and reports what a fixed $$C$$ achieves over random keys. Second, a run of forty trials takes some hours: the cost is $$2K$$ homomorphic squarings per trial, and is unaffected by `M`, which `EncryptLinComb` simulates rather than performing.
 
+# How to Cite
 
+```bibtex
+@inproceedings{CKS26,
+  author    = {Hyeongmin Choe and Minsik Kang and Damien Stehl{\'e}},
+  title     = {New {IND-CPA-D} Attacks on {BFV} and {BGV}},
+  booktitle = {Proceedings of the 2026 {ACM} {SIGSAC} Conference on Computer and Communications Security, {CCS} 2026, The Hague, Netherlands, November 15--19, 2026},
+  publisher = {{ACM}},
+  year      = {2026},
+  doi       = {10.1145/3830454.3846665}
+}
+```
+
+# Contributors
+
+The implementation was mainly done by
+  - Hyeongmin Choe (University of Luxembourg)
+  - Minsik Kang (Sejong University)
