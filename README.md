@@ -30,6 +30,8 @@ It includes the following codes, for the BGV bootstrapping attack using [HElib l
 
   - (b) A script `BGV-BTS-KRD-slices-and-plot.py` that analyzes the collected samples to generate the distribution plots (such as Figures 2 and 6 for the reconstructed coefficients; and Figures 7 and 8 for the variances with the corresponding non-zero indices of sk.), launching a KR-D attack to recover the secret key from the failed data (by using certain amount of slices among the whole number of slots). The scores of the KR-D attack for each size of the slices are also reported in Table 2. 
 
+  - (c) A script `BGV-BTS-oracle-estimate.py` that computes the theoretical estimate of the number of decryption oracle calls in Section 3.4 (506 and 611 for A&#42; and B&#42;). 
+
 ## How to use
 ### (a) Collecting Bootstrapping Failures
 First, download HElib from https://github.com/homenc/HElib (tested using the commit `3e337a6` from July 18th, 2023). 
@@ -93,6 +95,13 @@ Among the data point from the slices, it chooses the top candidate indices by va
 The plot option `--plot-vars` plots a 2×2 histogram grid (for Figures 7 and 8) showing the variance distribution of all $m$ indices, one panel per $\ell$. The actual secret key indices are highlighted with red markers for visual inspection.
 
 The other plot option `--plot-coeff-dist` plots 4 figures (for Figures 2 and 6) showing the distributions of $$c_j$$ per $\ell$, distinct graphs for its corresponding secret key value $$s_j \in \{-1, 0, 1\}$$. 
+
+### (c) Oracle-Call Estimate
+This needs neither HElib nor the collected samples, only `numpy`.
+```bash
+python BGV-BTS-oracle-estimate.py
+```
+For each parameter set and each $\ell$, it prints the KL divergence, the number of failing slots, and the number of decryption oracle calls; the paper uses $\ell = 1$.
 
 <!------------------------------
 --------------------------------
