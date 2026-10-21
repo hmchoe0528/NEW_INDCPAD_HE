@@ -172,11 +172,12 @@ key are among them, graded against the key the gathering stored. The step that
 turns the candidates into the key, described in Sec. 3, is not run here.
 
 On a fresh sample, expect 30 to 32 of 32 at Tab. 2's counts, rising with the
-number of ciphertexts; A\* can stay at 31/32 up to 500. What a fresh run should show is that trend: recall climbing towards
-32/32 as ciphertexts are added, with the precision near 32/97. An attacker who
-falls short cannot tell which position is missing, but can tell that the final
-step failed, since a key is checked against the public key; it then gathers more
-failures or keeps more candidates per level.
+number of ciphertexts; A\* can stay at 31/32 up to 500. What a fresh run should
+show is that trend: recall climbing towards 32/32 as ciphertexts are added,
+with the precision near 32/97. An attacker who falls short cannot tell which
+position is missing, but can tell that the final step failed, since a key is
+checked against the public key; it then gathers more failures or keeps more
+candidates per level.
 
 #### Samples
 
