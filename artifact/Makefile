@@ -2,7 +2,7 @@
 #
 # One target per claim of the camera-ready, and nothing else on that path.
 #
-#   make quick     ~2 min    All three attacks, at reduced parameters for
+#   make quick     a few min All three attacks, at reduced parameters for
 #                            Sections 4 and 5. Validates no claim on its own;
 #                            it is there to show that the image works.
 #
@@ -29,6 +29,9 @@
 #   make appendix-ctct  ~1 h      Tables 5 and 7, Figure 11
 #   make appendix-figs  ~1 s      Figures 9 and 11, from the stored logs
 #
+# The times are what we measured, and may differ on other machines;
+# `make report` records what each target actually took.
+#
 # THREADS sets the OpenMP thread count and defaults to 1, because the timings
 # the paper quotes are single-threaded. Raising it changes the wall time and not
 # the results; 8 is a good choice, and scaling saturates near there. Section 3
@@ -38,7 +41,7 @@
 # TRIALS sets how many ct-ct trials the box plots are built from. The paper uses
 # 40; the cost is linear in it and the separation shows from about 10 onward.
 #
-# The BGV key recovery memory-maps the samples and stays near 3 GB whatever
+# The BGV analysis memory-maps the samples and stays near 3 GB whatever
 # their size. The density estimation behind the figures peaked at 4.7 GB and a
 # gathering at 6.6, so give the machine 10. Docker Desktop's own VM limit,
 # under Settings, Resources, may sit below that.
@@ -48,10 +51,12 @@ TRIALS   ?= 40
 RESULTS  ?= results
 DATA     ?= data-collected-by-authors
 
-# How many failing ciphertexts c1 gathers per parameter set. About 26 minutes of
-# each collection is setup, which does not depend on this; after it, a failing
-# ciphertext costs 2.4 seconds, and 6 GB is written per set. The paper stopped
-# at 492 for A*, and the key came out in full at 400 on the run we measured.
+# How many failing ciphertexts c1 gathers per parameter set. The setup of each
+# collection, which does not depend on this, takes about 26 minutes for A* and
+# 45 for B*; after it, a failing ciphertext costs about 2.4 seconds for A* and 4
+# for B*, and 6 GB is written per set. The paper stopped
+# at 492 for A*. The analysis sweeps 50 to 500, so that the trend shows past
+# Table 2's counts on a fresh sample.
 FAILS ?= 500
 
 CTCT13 := OMP_NUM_THREADS=$(THREADS) indcpad_ctct
@@ -93,13 +98,13 @@ quick: | $(RESULTS)
 	@test -d $(DATA)/m21845_p2_e8_ep4_r1 -o -d $(DATA)/Collected_data/m21845_p2_e8_ep4_r1 \
 	  || { echo "$(DATA) holds no samples: mount them, or run 'make c1'"; exit 1; }
 	$(call mark,authors)
-	@echo "== Section 3, from the samples that ship with the artifact"
+	@echo "== Section 3, from the samples under $(DATA)"
 	for m in 21845 28679; do \
-	  cd /artifact/$(DATA) && $(PLOT) --m $$m --slices 50:360:50 \
+	  cd /artifact/$(DATA) && $(PLOT) --m $$m --slices 50:510:50 \
 	    > /artifact/$(RESULTS)/c1-keyrecovery-m$$m.txt 2>&1 ; \
 	done
-	@echo "-- A* (m=21845):" && tail -9 $(RESULTS)/c1-keyrecovery-m21845.txt
-	@echo "-- B* (m=28679):" && tail -9 $(RESULTS)/c1-keyrecovery-m28679.txt
+	@echo "-- A* (m=21845):" && sed -n '/Ctxts *Rows/,$$p' $(RESULTS)/c1-keyrecovery-m21845.txt
+	@echo "-- B* (m=28679):" && sed -n '/Ctxts *Rows/,$$p' $(RESULTS)/c1-keyrecovery-m28679.txt
 	@echo "== Section 4, at the smallest ring dimension"
 	$(PTCT) --logN 12 --ptm 786433 --depth 4 --cF 1.0 \
 	  > $(RESULTS)/general_logN12_ptm786433_depth4.txt 2>&1
@@ -115,10 +120,17 @@ quick: | $(RESULTS)
 
 ## ---------------------------------------------------------------------- C1 --
 # BGV bootstrapping. The failures are gathered here rather than read from ours,
-# which is two hours and 12 GB; AUTHORDATA=1 reads a set gathered earlier
-# instead. Table 2's published counts belong to our sample, which is not
-# distributed, so a fresh gathering reproduces the recovery, not the counts. The slices are the ones Table 2 prints:
+# which takes about two hours and writes 12 GB; ranking the candidate positions
+# of the key and drawing Figure 2 take about 20 minutes more; AUTHORDATA=1 reads a set gathered earlier instead.
+# Table 2's published counts belong to our sample, which is not
+# distributed, so a fresh gathering reproduces the trend, not the counts. The
+# slices run from 50 to 500 in steps of 50, which covers the ones Table 2 prints:
 # 50, 150 and 250 ciphertexts for A*, 50, 200 and 350 for B*.
+#
+# What the analysis measures is support identification: how many of the 32
+# nonzero positions of the key fall among its 97 candidates (32 per level for
+# l = 2, 4, 8, one for l = 1). The step that turns the candidates into the key
+# is not run here.
 #
 # Of the plots the analysis can draw, only the A* coefficient distributions are
 # Figure 2. The rest belong to the full version; see appendix-bgv.
@@ -140,15 +152,15 @@ else
 	@test -d $(DATA)/m21845_p2_e8_ep4_r1 -o -d $(DATA)/Collected_data/m21845_p2_e8_ep4_r1 \
 	  || { echo "$(DATA) holds no samples: mount them, or drop AUTHORDATA"; exit 1; }
 	$(call mark,authors)
-	@echo "== reading the samples that ship with the artifact"
+	@echo "== reading the samples under $(DATA)"
 endif
-	@echo "== Table 2, recovering the key"
+	@echo "== Table 2, ranking the candidate positions of the key"
 	for m in 21845 28679; do \
-	  cd /artifact/$(BGVSRC) && $(PLOT) --m $$m --slices 50:360:50 \
+	  cd /artifact/$(BGVSRC) && $(PLOT) --m $$m --slices 50:510:50 \
 	    > /artifact/$(RESULTS)/c1-keyrecovery-m$$m.txt 2>&1 ; \
 	done
-	@echo "-- A* (m=21845):" && tail -9 $(RESULTS)/c1-keyrecovery-m21845.txt
-	@echo "-- B* (m=28679):" && tail -9 $(RESULTS)/c1-keyrecovery-m28679.txt
+	@echo "-- A* (m=21845):" && sed -n '/Ctxts *Rows/,$$p' $(RESULTS)/c1-keyrecovery-m21845.txt
+	@echo "-- B* (m=28679):" && sed -n '/Ctxts *Rows/,$$p' $(RESULTS)/c1-keyrecovery-m28679.txt
 	@echo "== Figure 2, the A* coefficient distributions; about 18 minutes"
 	cd /artifact/$(BGVSRC) && FIGNAME=fig2 $(PLOT) --m 21845 --plot-coeff-dist
 	$(call tick,end)

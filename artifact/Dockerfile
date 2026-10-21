@@ -73,7 +73,7 @@ RUN sed -i 's/-Wall -Werror/-Wall/' /src/ofhe13/CMakeLists.txt \
  && cp /src/ofhe13/build/bin/examples/pke/indcpad_ctct \
        /src/ofhe13/build/bin/examples/pke/ctct_multikey /opt/openfhe-v13/bin/
 
-############################  OpenFHE v1.5 (pt-ct, Appendix E.3)  ##############
+############################  OpenFHE v1.5.0 (pt-ct, Section 4, and Appendix E.3)
 FROM builder-base AS openfhe15
 ARG JOBS
 ARG OPENFHE_V15=df495ba

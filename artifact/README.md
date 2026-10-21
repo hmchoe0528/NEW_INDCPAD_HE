@@ -50,8 +50,9 @@ docker run --rm -v "$PWD/results:/artifact/results" \
   indcpad-artifact make c2 c3
 ```
 
-Section 3 gathers its own failing ciphertexts (about two hours at
-`THREADS=8`) and then recovers the key:
+Section 3 gathers its own failing ciphertexts (about two hours at `THREADS=8`)
+and then ranks the candidate positions of the key and draws Fig. 2 (about 20
+minutes):
 
 ```bash
 docker run --rm -v "$PWD/results:/artifact/results" \
@@ -60,7 +61,7 @@ docker run --rm -v "$PWD/results:/artifact/results" \
 
 - Read `results/REPORT.md`, which puts each result beside the value the paper
   gives, one section per claim.
-- **`make quick` is a two-minute smoke test** of all three attacks at reduced
+- **`make quick` is a smoke test** of all three attacks, a few minutes long, at reduced
   parameters. Its Section 3 part reads samples, so run it only after a `make c1`
   has gathered them under `data-collected-by-authors`; mount that directory and
   pass `AUTHORDATA=1`.
@@ -78,7 +79,7 @@ docker run --rm -v "$PWD/results:/artifact/results" \
   | `c1 AUTHORDATA=1`, `appendix-bgv` | 8 GB | 4 GB of samples |
   | `c1` | 10 GB | 12 GB written, 6 per parameter set |
 
-  The samples are memory-mapped rather than read, so the key recovery itself
+  The samples are memory-mapped rather than read, so the Sec. 3 analysis itself
   stays near 3 GB whatever their size. Two things want room: the density
   estimation behind Fig. 2 and Figs. 6 to 8, peaking at 4.7 GB, and a
   gathering, peaking at 6.6. A whole `appendix` peaked at 7.2. Those are the
@@ -98,25 +99,28 @@ docker run --rm -v "$PWD/results:/artifact/results" \
 
 ## Targets
 
-One per claim of the camera-ready, and nothing else on that path.
+One per claim of the camera-ready, and nothing else on that path. The times
+here and below are what we measured, and may differ on other machines;
+`REPORT.md` records what each target actually took.
 
 | target | time | what |
 | --- | --- | --- |
-| `quick` | 2 min | all three attacks; a smoke test, and it validates no claim on its own |
+| `quick` | a few min | all three attacks; a smoke test, and it validates no claim on its own |
 | `c1` | ~2 h 20 | **C1**, Sec. 3 BGV bootstrapping: Tab. 2 and Fig. 2 |
 | `c2` | ~3 h | **C2**, Sec. 4 BFV pt-ct: Tab. 3 and Fig. 3 |
 | `c3` | 10 min | **C3**, Sec. 5 BFV ct-ct: Fig. 4 and Fig. 5 |
 | `report` | 1 s | collect `results/` into `REPORT.md` |
 ||
 
-`c1` gathers its own failing ciphertexts, which is most of its two hours. Each
+`c1` gathers its own failing ciphertexts (about two hours) and then ranks the
+candidate positions of the key and draws Fig. 2 (about 20 minutes). Each
 of the three also takes `AUTHORDATA=1`, which reads stored data instead of
 running the attack: for `c2` and `c3` the logs we ship under `paper_results/`,
 for `c1` a set of samples you gathered earlier:
 
 | | time | |
 | --- | --- | --- |
-| `make c1 AUTHORDATA=1` | ~19 min | the recovery and Fig. 2, from a gathered set |
+| `make c1 AUTHORDATA=1` | ~19 min | Tab. 2's analysis and Fig. 2, from a gathered set |
 | `make c2 AUTHORDATA=1` | 1 s | Tab. 3 and Fig. 3, from our logs |
 | `make c3 AUTHORDATA=1` | 2 s | Fig. 5, from our log |
 
@@ -143,8 +147,9 @@ we do not ask for them to be evaluated.
 - `TRIALS=n` sets how many ct-ct trials the box plots use. The paper uses 40 and
   the cost is linear in it; the separation shows from about 10.
 - `FAILS=n` sets how many failing ciphertexts `c1` gathers per parameter set.
-  Twenty-six minutes of each gathering is setup, which does not depend on
-  `FAILS`; a failing ciphertext after it costs 2.4 seconds.
+  The setup of each gathering, which does not depend on `FAILS`, takes about
+  26 minutes for A\* and 45 for B\*; a failing ciphertext after it costs about
+  2.4 seconds for A\* and 4 for B\*.
 - `THREADS=n` raises the OpenMP thread count, and the BFV attacks scale with it.
   The Sec. 3 analysis and the figure-drawing are Python and ignore it; the
   Sec. 3 collection threads part of its coefficient extraction, but spends its
@@ -155,15 +160,30 @@ we do not ask for them to be evaluated.
 ## Contents
 
 ### **Section 3. BGV** 
-Recall and precision per slice, against Tab. 2. Ours gives 25/32
-correct at 150 ciphertexts for A\* and 27/32 at 200 for B\*. The analysis is
-deterministic, so this reproduces exactly.
+Recall and precision per slice, from 50 to 500 ciphertexts in steps of 50.
+By default `c1` gathers a fresh sample, so the reported counts may differ from
+Tab. 2's. On the samples we gathered for the paper, `AUTHORDATA=1` gives the
+same counts as Tab. 2.
+
+What `c1` measures is support identification, not key recovery. It ranks the
+coordinates by variance and keeps 97 candidates (32 per level for ℓ = 2, 4, 8,
+and one for ℓ = 1); "correct" counts how many of the 32 nonzero positions of the
+key are among them, graded against the key the gathering stored. The step that
+turns the candidates into the key, described in Sec. 3, is not run here.
+
+On a fresh sample, expect 30 to 32 of 32 at Tab. 2's counts, rising with the
+number of ciphertexts; A\* can stay at 31/32 up to 500. What a fresh run should show is that trend: recall climbing towards
+32/32 as ciphertexts are added, with the precision near 32/97. An attacker who
+falls short cannot tell which position is missing, but can tell that the final
+step failed, since a key is checked against the public key; it then gathers more
+failures or keeps more candidates per level.
 
 #### Samples
 
 Section 3 runs on collected bootstrapping failures. `make c1` gathers them
 itself (about two hours for both parameter sets at `THREADS=8`) and then
-recovers the key, so nothing has to be downloaded. The gathered data lands
+ranks the candidate positions of the key and draws Fig. 2 (about 20 minutes),
+so nothing has to be downloaded. The gathered data lands
 under `results/` as
 
 ```

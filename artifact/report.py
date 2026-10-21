@@ -46,8 +46,10 @@ COVERAGE = [
 # What each claim says, for the heading of its section.
 CLAIMS = {
     "C1": ("BGV bootstrapping", "Table 2 and Figure 2",
-           "The secret key is recovered from the intermediate values of "
-           "failing bootstrappings."),
+           "The nonzero positions of the secret key are identified from the "
+           "intermediate values of failing bootstrappings: the count is how "
+           "many of the 32 fall among the 97 candidates. The final step that "
+           "turns the candidates into the key is not run."),
     "C2": ("BFV pt-ct multiplication", "Table 3 and Figure 3",
            "The whole secret key is recovered in N decryption queries, "
            "within a depth the noise bound certifies."),
@@ -141,12 +143,19 @@ def read(path):
 
 
 def recall_rows(text):
-    """(ciphertexts, rows, correct) from the summary table."""
+    """ciphertexts -> (rows, correct, sample size if the slice ran past it)."""
     out = {}
     for line in text.splitlines():
         m = re.match(r"\s*(\d+)\s+(\d+)\s+\d+\s+(\d+/\d+)\s", line)
         if m:
             out[int(m.group(1))] = (m.group(2), m.group(3))
+    # A slice past the end of the sample uses all of it, and says so.
+    total = re.search(r"Total ciphertexts:\s*(\d+)", text)
+    if total:
+        total = int(total.group(1))
+        out = {n: v + (total if n > total else None,) for n, v in out.items()}
+    else:
+        out = {n: v + (None,) for n, v in out.items()}
     return out
 
 
@@ -174,28 +183,30 @@ def main():
                   "Results at `c1-keyrecovery-m21845.txt` and",
                   "`c1-keyrecovery-m28679.txt`.", ""]
         if authors:
-            lines += ["Recovered here, from a previously gathered set of samples.",
+            lines += ["Analysed here, from a previously gathered set of samples.",
                       "Table 2's counts are listed beside it for reference.", "",
                       "| set | ciphertexts | slots | correct | paper |",
                       "| --- | --- | --- | --- | --- |"]
         else:
-            lines += ["Gathered and recovered here, so these are this run's own",
+            lines += ["Gathered and analysed here, so these are this run's own",
                       "failures rather than the authors'. What reproduces is the",
-                      "recovery, not Table 2's counts, which belong to their",
-                      "sample.", "",
+                      "trend, recall rising towards 32/32 as ciphertexts are",
+                      "added, not Table 2's counts, which belong to their sample.",
+                      "",
                       "| set | ciphertexts | slots | correct |",
                       "| --- | --- | --- | --- |"]
         for m in (21845, 28679):
             if m not in got1:
                 continue
             label = "A*" if m == 21845 else "B*"
-            for n in sorted(PAPER["C1"][m]):
+            for n in sorted(set(PAPER["C1"][m]) | set(got1[m])):
                 mine = got1[m].get(n)
-                cells = [label, str(n), mine[0] if mine else "-",
+                used = "%d (all %d)" % (n, mine[2]) if mine and mine[2] else str(n)
+                cells = [label, used, mine[0] if mine else "-",
                          mine[1] if mine else "not reached"]
                 if authors:
-                    slots, correct = PAPER["C1"][m][n]
-                    cells.append("%s, %s" % (slots, correct))
+                    paper = PAPER["C1"][m].get(n)
+                    cells.append("%s, %s" % paper if paper else "-")
                 row = "| " + " | ".join(cells) + " |"
                 lines.append(row)
         lines.append("")

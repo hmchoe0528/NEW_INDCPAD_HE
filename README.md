@@ -17,7 +17,7 @@ It includes the following CPA-D-style attacks, one per section of the paper:
 # Reproducing the Paper Results
 The sections below build each attack by hand against upstream HElib and OpenFHE. 
 
-For a one-command, containerized reproduction of every figure and table — no manual build, no library download — use the Docker artifact in [`artifact/`](artifact/README.md): `make quick` for a two-minute smoke test, and `make c1`, `make c2`, `make c3` for the three claims. 
+For a one-command, containerized reproduction of every figure and table — no manual build, no library download — use the Docker artifact in [`artifact/`](artifact/README.md): `make quick` for a smoke test of a few minutes, and `make c1`, `make c2`, `make c3` for the three claims. 
 
 See [`artifact/README.md`](artifact/README.md) for further details.
 
@@ -28,7 +28,7 @@ It includes the following codes, for the BGV bootstrapping attack using [HElib l
 
   - (a) A package of KR-D attack scripts, mounting bootstrappings, then decrypting, and collecting the intermediate values from the failed slots, which can be publicly back-tracked. It also stores the statistical mapping depending only on $m$, and the secret keys to grade the KR-D attack's output. It works for the parameters A&#42; and B&#42; described in Table 1. The time taken for collecting the intermediate values are reported in Table 2. 
 
-  - (b) A script `BGV-BTS-KRD-slices-and-plot.py` that analyzes the collected samples to generate the distribution plots (such as Figures 2 and 6 for the reconstructed coefficients; and Figures 7 and 8 for the variances with the corresponding non-zero indices of sk.), launching a KR-D attack to recover the secret key from the failed data (by using certain amount of slices among the whole number of slots). The scores of the KR-D attack for each size of the slices are also reported in Table 2. 
+  - (b) A script `BGV-BTS-KRD-slices-and-plot.py` that analyzes the collected samples to generate the distribution plots (such as Figures 2 and 6 for the reconstructed coefficients; and Figures 7 and 8 for the variances with the corresponding non-zero indices of sk.), launching the KR-D analysis that identifies the nonzero positions of the secret key from the failed data (by using certain amount of slices among the whole number of slots). The scores of the KR-D attack for each size of the slices are also reported in Table 2. 
 
   - (c) A script `BGV-BTS-oracle-estimate.py` that computes the theoretical estimate of the number of decryption oracle calls in Section 3.4 (506 and 611 for A&#42; and B&#42;). 
 
@@ -67,7 +67,7 @@ Then, you can now run the attack executable. A quick test will be:
   waitForInput=0 progress=1 progressStep=10 stopAfterFailCount=1
 ```
 
-You can run until 1000 failing ciphertexts are collected, taking several hours to days, depending on `nthreads` (though, it may not scale great):
+You can run until 1000 failing ciphertexts are collected. A setup of about 26 minutes for A&#42; (45 for B&#42;) comes first, and each failing ciphertext then costs about 2.4 seconds (4 for B&#42;), so this takes one to two hours; `nthreads` hardly changes it, since the bootstrapping and the setup are not threaded:
 
 ```bash
 /path/to/HElib/build/bin/indcpad \
@@ -78,7 +78,7 @@ You can run until 1000 failing ciphertexts are collected, taking several hours t
 Here, `iter` is the maximum number of attack iterations, while `stopAfterFailCount` is the number of failing iterations to collect before stopping.
 The output files will be saved under `Collected_data` in the current working directory where you run the executable.
 
-The output files run to over 6 GB per parameter set before compression, and a full collection takes around a day (or slightly more). A shorter run of a few hundred failures already suffices to recover the key, as reported in Table 2.
+The output files run to over 6 GB per parameter set before compression (6.5 GB of text for our 492 failing ciphertexts of A&#42;). A run of a few hundred failures already puts all the nonzero positions of the key among the candidates, as reported in Table 2.
 
 ### (b) KR-D Recovery
 Now, we are ready to run the KR-D attack with the collected outputs.
@@ -120,7 +120,7 @@ It includes the following codes, for the BFV pt-ct mult attack using [OpenFHE li
 
 ## How to use
 ### (a) PT-CT Multiplications and KR-D attack
-First, download [OpenFHE library](https://github.com/openfheorg/openfhe-development) (tested using the commit `df495ba` from February 26th, 2026). 
+First, download [OpenFHE library](https://github.com/openfheorg/openfhe-development) (tested using the commit `df495ba` from February 26th, 2026, v1.5.0). 
 
 - In `openfhe-development/src/pke/examples`: Put `bfv_ptct.hpp`, and `bfv_ptct_sk_general.cpp` beating error estimations for any $pt \in \mathcal{R}_t$, i.e., 
 
@@ -216,7 +216,7 @@ It includes the following codes, for the BFV ct-ct mult attack using [OpenFHE li
 
 ## How to use
 ### (a) CT-CT Multiplications and IND-CPA-D attack
-First, download [OpenFHE library](https://github.com/openfheorg/openfhe-development) (tested using the commit `2bf4524` from May 19th, 2025). We note that the depth-based parameter generation policy has been slightly changed from commit `5ebe2b2` (June 27th, 2025), newly introducing `deltaMS` making the attack less efficient.
+First, download [OpenFHE library](https://github.com/openfheorg/openfhe-development) (tested using the commit `2bf4524` from May 19th, 2025, v1.3). We note that the depth-based parameter generation policy has been slightly changed from commit `5ebe2b2` (June 27th, 2025), newly introducing `deltaMS` making the attack less efficient.
 
 - In `openfhe-development/src/pke/examples`: Put `bfv_ctct.hpp` and `indcpad_ctct.cpp`.
 - In `openfhe-development/src/pke/`: Replace `CMakeLists.txt` by `(pke) CMakeLists.txt`
