@@ -108,6 +108,7 @@ here and below are what we measured, and may differ on other machines;
 | `quick` | a few min | all three attacks; a smoke test, and it validates no claim on its own |
 | `c1` | ~2 h 20 | **C1**, Sec. 3 BGV bootstrapping: Tab. 2 and Fig. 2 |
 | `c2` | ~3 h | **C2**, Sec. 4 BFV pt-ct: Tab. 3 and Fig. 3 |
+| `c2-oracle` | ~50 min | C2's attack, the secret key used only for key generation, the decryption oracle and grading |
 | `c3` | 10 min | **C3**, Sec. 5 BFV ct-ct: Fig. 4 and Fig. 5 |
 | `report` | 1 s | collect `results/` into `REPORT.md` |
 ||
@@ -150,6 +151,8 @@ we do not ask for them to be evaluated.
   The setup of each gathering, which does not depend on `FAILS`, takes about
   26 minutes for A\* and 45 for B\*; a failing ciphertext after it costs about
   2.4 seconds for A\* and 4 for B\*.
+- `HWT=n` sets the Hamming weight of the ordinary secret key in `c1`; see
+  Section 3 below.
 - `THREADS=n` raises the OpenMP thread count, and the BFV attacks scale with it.
   The Sec. 3 analysis and the figure-drawing are Python and ignore it; the
   Sec. 3 collection threads part of its coefficient extraction, but spends its
@@ -178,6 +181,19 @@ with the precision near 32/97. An attacker who falls short cannot tell which
 position is missing, but can tell that the final step failed, since a key is
 checked against the public key; it then gathers more failures or keeps more
 candidates per level.
+
+Tab. 1 gives (h, h̃) = (120, 32) for A\* and B\*, but the runs behind Tab. 2
+used (h, h̃) = (32, 32), as `c1` does by default (thanks to an anonymous CCS-AE
+reviewer for spotting this). `make c1 HWT=120` runs with Tab. 1's weights. The
+trend does not change: in four such runs, each with fresh keys, all 32 positions
+were first among the candidates at
+
+| | run 1 | run 2 | run 3 | run 4 | Tab. 2 |
+|---|---|---|---|---|---|
+| A\* | 400 | 200 | 300 | 350 | 250 |
+| B\* | 450 | 400 | 250 | 300 | 350 |
+
+ciphertexts, and every run reached 32/32 by 500.
 
 #### Samples
 
@@ -231,6 +247,18 @@ again, up to ten times, and `REPORT.md` says how many draws each dimension
 took. A key that stops later is left alone, since rerunning it would cost
 hours.
 
+`bfv_ptct_sk_general`, which `c2` runs, is the code we used to tune the attack:
+it also reads the noise of the ciphertexts with the secret key, to pick and
+check the attack parameters, and uses it for the redraws above. On the
+parameters of Table 3 these checks leave the run as Algorithm 1 states it: in
+the logs behind Table 3, every index takes `K = d_leg` multiplications, there
+is no retry, and `O_Dec` counts exactly `N` calls to `Decrypt`. To make this
+plain, `make c2-oracle` runs `bfv_ptct_oracle`, which uses the secret key only
+for key generation, the decryption oracle and, after the attack, grading the
+match ratio. It checks the recovered key against the public key instead. In our
+run it recovered the key at all five dimensions, with the `K` of Table 3 and `N`
+queries, in about 50 minutes.
+
 ### **Section 5. BFV ct-ct** 
 The distinguishing attack separates two distributions: the distributions `D_0` and `D_1` corresponding to the challenge bit $0$ and $1$. 
 The Figure (analogous to Fig. 5) must show a clear separation, much larger deviation for $D_1$. 
@@ -241,6 +269,11 @@ The window that separates the decrypted result is only `log2 t` bits wide: below
 Only in between, they separate. For our parameter sets, the band carries probability of `0.908`.
 We have seen 8/10, 9/10 and 10/10 over three runs of `appendix-ctct`, as one can expect.
 - The key behind Fig. 5 had `k_s = 3.305`, an ordinary draw against a median of 3.281.
+- The IQR ratio of Sec. 5.2 (31.6 on average) is a property of that key.
+The decrypted values are integers, and their size scales as `k_s^K` with `K = 34`.
+For a key with a smaller `k_s`, most of `D_0` may round to `0`, so that `IQR(D_0)` can be `0` and the ratio undefined, while `D_1` is still spread out and the two remain apart.
+`ctct_multikey` shows this: at `k_s = 3.191` the largest `|y|` is 2 under `D_0` and 28 under `D_1`.
+`ctct-boxplot.py` prints the ratio, or says when it is undefined.
 - `ctct_multikey` does without any such band and reports what one fixed gain achieves over ten random keys (Tab. 5 and 7) 
 It prints, per key, the largest `|y|` under `D_0` and the smallest `|y|` under `D_1`, with their ratio.
 It marks a key as separating when those two ranges are disjoint.

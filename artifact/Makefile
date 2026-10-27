@@ -9,6 +9,8 @@
 #   make c1        ~2 h 20   Section 3, BGV bootstrapping: Table 2 and
 #                            Figure 2. Gathers its own failing ciphertexts.
 #   make c2        ~3 h      Section 4, BFV pt-ct: Table 3 and Figure 3.
+#   make c2-oracle ~50 min   The same attack, the secret key used only for
+#                            key generation, the decryption oracle and grading.
 #   make c3        ~10 min   Section 5, BFV ct-ct: Figures 4 and 5.
 #
 #   make report    instant   Sets what was produced beside what the paper says.
@@ -59,11 +61,15 @@ DATA     ?= data-collected-by-authors
 # Table 2's counts on a fresh sample.
 FAILS ?= 500
 
+# Hamming weight of the ordinary secret key in c1 (HElib's t); see the README.
+HWT ?= 32
+
 CTCT13 := OMP_NUM_THREADS=$(THREADS) indcpad_ctct
 CTCT15 := OMP_NUM_THREADS=$(THREADS) /opt/openfhe-v15/bin/indcpad_ctct
 MK13   := OMP_NUM_THREADS=$(THREADS) /opt/openfhe-v13/bin/ctct_multikey
 MK15   := OMP_NUM_THREADS=$(THREADS) /opt/openfhe-v15/bin/ctct_multikey
 PTCT   := OMP_NUM_THREADS=$(THREADS) bfv_ptct_sk_general
+PTCTO  := OMP_NUM_THREADS=$(THREADS) bfv_ptct_oracle
 BGV    := indcpad
 PLOT   := python3 /artifact/BGV/BGV-BTS-KRD-slices-and-plot.py
 
@@ -82,12 +88,12 @@ tick = @printf '%s\t%s\t%s\n' '$@' "$$(date +%s)" '$(1)' >> $(RESULTS)/timings.t
 # and samples, so that the report can say which it is showing.
 mark = @printf '%s\t%s\n' '$@' '$(1)' >> $(RESULTS)/sources.tsv
 
-.PHONY: help quick c1 c2 c3 report clean \
+.PHONY: help quick c1 c2 c2-oracle c3 report clean \
         appendix appendix-bgv appendix-ctct appendix-figs
 
 help:
 	@sed -n '1,/^$$/p' Makefile | sed 's/^# \{0,1\}//'
-	@echo "Current: THREADS=$(THREADS) TRIALS=$(TRIALS) RESULTS=$(RESULTS) DATA=$(DATA)"
+	@echo "Current: THREADS=$(THREADS) TRIALS=$(TRIALS) RESULTS=$(RESULTS) DATA=$(DATA) HWT=$(HWT)"
 
 ## ------------------------------------------------------------------- quick --
 # The smoke test. Section 3 runs at the paper's parameters, on a set gathered
@@ -142,7 +148,7 @@ ifeq ($(AUTHORDATA),)
 	@echo "== gathering the failing ciphertexts, both parameter sets"
 	@echo "   about 46 minutes for A* and 72 for B*, at THREADS=8"
 	for phim in 16384 23040; do \
-	  cd /artifact/$(RESULTS) && $(BGV) p=2 r=1 c=3 L=400 N=$$phim t=32 \
+	  cd /artifact/$(RESULTS) && $(BGV) p=2 r=1 c=3 L=400 N=$$phim t=$(HWT) \
 	    nthreads=$(THREADS) skHwt_sp=32 iter=100000 waitForInput=0 noPrint=1 \
 	    progress=1 progressStep=10 stopAfterFailCount=$(FAILS) \
 	    > c1-collect-N$$phim.txt 2>&1 ; \
@@ -209,6 +215,23 @@ endif
 	@echo "-- Figure 3, drawn as a PDF from the run's own log"
 	cd BFV-pt-ct && FIGNAME=fig3 python3 log2latex.py \
 	  /artifact/$(RESULTS)/general_logN16_ptm1048577_depth4.txt --plot
+	$(call tick,end)
+
+# The same attack as Algorithm 1 states it: K = d_leg multiplications and one
+# decryption query per root, then a check of the recovered key against the
+# public key. The secret key is used only for key generation, the decryption
+# oracle and grading the match ratio. c2 runs the version we tuned the attack
+# with, which also reads the noise with the secret key; on Table 3's parameters
+# both make the same queries.
+c2-oracle: | $(RESULTS)
+	$(call tick,start)
+	for case in "12 786433" "13 4194305" "14 67108865" "15 33423361" "16 1048577"; do \
+	  set -- $$case; \
+	  log=$(RESULTS)/oracle_logN$$1_ptm$$2_depth4.txt; \
+	  echo "-- logN $$1, ptm $$2"; \
+	  $(PTCTO) --logN $$1 --ptm $$2 --depth 4 --cF 1.0 > $$log 2>&1 ; \
+	  grep -E "Multiplications|O_Dec calls|Public-key check|SK Coeff Match Ratio" $$log; \
+	done
 	$(call tick,end)
 
 ## ---------------------------------------------------------------------- C3 --

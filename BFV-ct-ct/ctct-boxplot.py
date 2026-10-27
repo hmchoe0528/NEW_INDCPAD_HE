@@ -35,6 +35,19 @@ if df_plot.empty:
     raise SystemExit("no trial rows found in %s" % log_path)
 print("plotting %d trials from %s" % (df_plot['Value'].size // 20, log_path))
 
+# Sec. 5.2's IQR ratio, 31.6 on average for Fig. 5 (quartiles as observed values). For a
+# key with a smaller k_s, most of D_0 may round to 0 and the ratio is then undefined.
+def iqr(v):
+    return v.quantile(0.75, interpolation='higher') - v.quantile(0.25, interpolation='higher')
+per_idx = df_plot.groupby(['Index', 'Type'])['Value'].agg(iqr).unstack()
+nz = per_idx[per_idx.ct0 > 0]
+if len(nz):
+    print("average IQR ratio D_1/D_0: %.2f, over %d of %d indices"
+          % ((nz.ct1 / nz.ct0).mean(), len(nz), len(per_idx)))
+if len(nz) < len(per_idx):
+    print("IQR ratio undefined at %d indices: most of D_0 rounds to 0 (IQR(D_0) = 0), "
+          "a key with a small k_s" % (len(per_idx) - len(nz)))
+
 plt.figure(figsize=(10, 5.5))
 unique_indices = sorted(df_plot['Index'].unique())
 colors = sns.color_palette("husl", len(unique_indices))

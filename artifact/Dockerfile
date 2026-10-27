@@ -79,7 +79,8 @@ ARG JOBS
 ARG OPENFHE_V15=df495ba
 RUN git clone https://github.com/openfheorg/openfhe-development.git /src/ofhe15 \
  && git -C /src/ofhe15 checkout ${OPENFHE_V15}
-COPY BFV-pt-ct/bfv_ptct.hpp BFV-pt-ct/bfv_ptct_sk_general.cpp BFV-pt-ct/bfv_ptct_sk.cpp \
+COPY BFV-pt-ct/bfv_ptct.hpp BFV-pt-ct/bfv_ptct_sk_general.cpp BFV-pt-ct/bfv_ptct_oracle.cpp \
+     BFV-pt-ct/bfv_ptct_sk.cpp \
      BFV-pt-ct/bfv_ptct_param_prescreener.cpp \
      /src/ofhe15/src/pke/examples/
 COPY BFV-ct-ct/bfv_ctct.hpp BFV-ct-ct/indcpad_ctct.cpp BFV-ct-ct/ctct_multikey.cpp \
@@ -97,10 +98,11 @@ RUN sed -i 's/-Wall -Werror/-Wall/' /src/ofhe15/CMakeLists.txt \
       -DCMAKE_BUILD_TYPE=Release \
       -DBUILD_BENCHMARKS=OFF -DBUILD_UNITTESTS=OFF \
  && cmake --build /src/ofhe15/build --target \
-      bfv_ptct_sk_general indcpad_ctct ctct_multikey -j"${JOBS}" \
+      bfv_ptct_sk_general bfv_ptct_oracle indcpad_ctct ctct_multikey -j"${JOBS}" \
  && mkdir -p /opt/openfhe-v15/bin /opt/openfhe-v15/lib \
  && cp -a /src/ofhe15/build/lib/libOPENFHE*.so* /opt/openfhe-v15/lib/ \
  && cp /src/ofhe15/build/bin/examples/pke/bfv_ptct_sk_general \
+       /src/ofhe15/build/bin/examples/pke/bfv_ptct_oracle \
        /src/ofhe15/build/bin/examples/pke/indcpad_ctct \
        /src/ofhe15/build/bin/examples/pke/ctct_multikey /opt/openfhe-v15/bin/
 
