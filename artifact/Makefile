@@ -133,8 +133,8 @@ quick: | $(RESULTS)
 # which takes about two hours and writes 12 GB; ranking the candidate positions
 # of the key and drawing Figure 2 take about 20 minutes more. AUTHORDATA=1 reads
 # a set gathered earlier instead. Table 2's published counts belong to our
-# sample, which is not distributed, so a fresh gathering reproduces the trend,
-# not the counts. The
+# sample, which is not part of this repository, so a fresh gathering reproduces
+# the trend, not the counts. The
 # slices run from 50 to 500 in steps of 50, which covers the ones Table 2 prints:
 # 50, 150 and 250 ciphertexts for A*, 50, 200 and 350 for B*.
 #

@@ -127,8 +127,9 @@ for `c1` a set of samples you gathered earlier:
 
 Only a fresh run shows the attack works on your machine. For `c2` and `c3`,
 `AUTHORDATA=1` meets the paper's own numbers to the digit. For `c1` it does not:
-Table 2's counts belong to our sample, which we do not distribute, and any fresh
-gathering is a different sample. `REPORT.md` says which it is showing.
+Table 2's counts belong to our sample, which we do not distribute here (see the
+Artifact Appendix), and any fresh gathering is a different sample. `REPORT.md`
+says which it is showing.
 
 ### **The appendices.**
 
