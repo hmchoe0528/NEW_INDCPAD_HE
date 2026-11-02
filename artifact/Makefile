@@ -2,7 +2,7 @@
 #
 # One target per claim of the camera-ready, and nothing else on that path.
 #
-#   make quick     a few min All three attacks, at reduced parameters for
+#   make quick     a few min The attacks, at reduced parameters for
 #                            Sections 4 and 5. Validates no claim on its own;
 #                            it is there to show that the image works.
 #
@@ -97,20 +97,22 @@ help:
 
 ## ------------------------------------------------------------------- quick --
 # The smoke test. Section 3 runs at the paper's parameters, on a set gathered
-# earlier by `make c1`; Sections 4 and 5 run fresh at reduced parameters, which
-# is enough to show the attacks work.
+# earlier by `make c1`, and is skipped if there is none; Sections 4 and 5 run
+# fresh at reduced parameters, which is enough to show the attacks work.
 quick: | $(RESULTS)
 	$(call tick,start)
-	@test -d $(DATA)/m21845_p2_e8_ep4_r1 -o -d $(DATA)/Collected_data/m21845_p2_e8_ep4_r1 \
-	  || { echo "$(DATA) holds no samples: mount them, or run 'make c1'"; exit 1; }
-	$(call mark,authors)
-	@echo "== Section 3, from the samples under $(DATA)"
-	for m in 21845 28679; do \
-	  cd /artifact/$(DATA) && $(PLOT) --m $$m --slices 50:510:50 \
-	    > /artifact/$(RESULTS)/c1-keyrecovery-m$$m.txt 2>&1 ; \
-	done
-	@echo "-- A* (m=21845):" && sed -n '/Ctxts *Rows/,$$p' $(RESULTS)/c1-keyrecovery-m21845.txt
-	@echo "-- B* (m=28679):" && sed -n '/Ctxts *Rows/,$$p' $(RESULTS)/c1-keyrecovery-m28679.txt
+	@if test -d $(DATA)/m21845_p2_e8_ep4_r1 -o -d $(DATA)/Collected_data/m21845_p2_e8_ep4_r1; then \
+	  printf '%s\t%s\n' '$@' 'authors' >> $(RESULTS)/sources.tsv; \
+	  echo "== Section 3, from the samples under $(DATA)"; \
+	  for m in 21845 28679; do \
+	    (cd /artifact/$(DATA) && $(PLOT) --m $$m --slices 50:510:50 \
+	      > /artifact/$(RESULTS)/c1-keyrecovery-m$$m.txt 2>&1) || exit 1; \
+	  done; \
+	  echo "-- A* (m=21845):" && sed -n '/Ctxts *Rows/,$$p' $(RESULTS)/c1-keyrecovery-m21845.txt; \
+	  echo "-- B* (m=28679):" && sed -n '/Ctxts *Rows/,$$p' $(RESULTS)/c1-keyrecovery-m28679.txt; \
+	else \
+	  echo "== Section 3 skipped: $(DATA) holds no samples; mount them, or run 'make c1'"; \
+	fi
 	@echo "== Section 4, at the smallest ring dimension"
 	log=$(RESULTS)/general_logN12_ptm786433_depth4.txt; \
 	for draw in 1 2 3 4 5 6 7 8 9 10; do \
@@ -126,7 +128,7 @@ quick: | $(RESULTS)
 	@tail -2 $(RESULTS)/quick-ctct.txt
 	$(call tick,end)
 	@$(MAKE) --no-print-directory report
-	@echo "== all three attacks ran; see $(RESULTS)/REPORT.md"
+	@echo "== done; see $(RESULTS)/REPORT.md"
 
 ## ---------------------------------------------------------------------- C1 --
 # BGV bootstrapping. The failures are gathered here rather than read from ours,

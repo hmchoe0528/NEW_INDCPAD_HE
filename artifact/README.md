@@ -61,10 +61,10 @@ docker run --rm -v "$PWD/results:/artifact/results" \
 
 - Read `results/REPORT.md`, which puts each result beside the value the paper
   gives, one section per claim.
-- **`make quick` is a smoke test** of all three attacks, a few minutes long, at reduced
-  parameters. Its Section 3 part reads samples, so run it only after a `make c1`
-  has gathered them under `data-collected-by-authors`; mount that directory and
-  pass `AUTHORDATA=1`.
+- **`make quick` is a smoke test**, a few minutes long, with the BFV attacks at
+  reduced parameters. Its Section 3 part reads samples, and is skipped if there
+  are none: to include it, mount a set gathered by `make c1` at
+  `data-collected-by-authors`.
 - A plain `c1` gathers its own and needs only the results mount, as `c2` and
   `c3` do. `c1 AUTHORDATA=1` and `appendix-bgv` read a gathered set instead.
 - `--build-arg JOBS=n` sets the compile parallelism; it defaults to 4 because
@@ -105,7 +105,7 @@ here and below are what we measured, and may differ on other machines;
 
 | target | time | what |
 | --- | --- | --- |
-| `quick` | a few min | all three attacks; a smoke test, and it validates no claim on its own |
+| `quick` | a few min | a smoke test of the attacks, and it validates no claim on its own |
 | `c1` | ~2 h 20 | **C1**, Sec. 3 BGV bootstrapping: Tab. 2 and Fig. 2 |
 | `c2` | ~3 h | **C2**, Sec. 4 BFV pt-ct: Tab. 3 and Fig. 3 |
 | `c2-oracle` | ~50 min | C2's attack, the secret key used only for key generation, the decryption oracle and grading |
