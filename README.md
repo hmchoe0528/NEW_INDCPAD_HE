@@ -303,6 +303,18 @@ Two points are worth knowing before re-running. First, the key is drawn afresh e
 }
 ```
 
+or the [full version](https://eprint.iacr.org/2026/2546)
+
+```bibtex
+@misc{cryptoeprint:2026/2546,
+  author       = {Hyeongmin Choe and Minsik Kang and Damien Stehl{\'e}},
+  title        = {New {IND-CPA-D} Attacks on {BFV} and {BGV}},
+  howpublished = {Cryptology {ePrint} Archive, Paper 2026/2546},
+  year         = {2026},
+  url          = {https://eprint.iacr.org/2026/2546}
+}
+```
+
 # Contributors
 
 The implementation was mainly done by
